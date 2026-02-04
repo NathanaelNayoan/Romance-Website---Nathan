@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For you</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. PENGATURAN WARNA & TAMPILAN DASAR --- */
+        :root {
+            --sage-dark: #556b2f;  /* Warna Hijau */
+            --rose-red: #D65A65;   /* Warna Pink Tua */
+            --cream: #FFFDF5;      /* Warna Latar Kartu */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+            
+            /* Background Pemandangan */
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- 2. KOTAK KARTU UTAMA --- */
+        .container {
+            max-width: 650px;
+            width: 90%;
+            margin: 20px auto;
+            background-color: rgba(255, 253, 245, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        /* --- 3. TEKS & TOMBOL --- */
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--sage-dark);
+            margin-bottom: 10px;
+        }
+        h1 { font-size: 2.5rem; }
+        p { font-size: 0.95rem; color: #555; margin-bottom: 20px; }
+
+        .btn {
+            background-color: var(--sage-dark); color: white;
+            padding: 12px 30px; border: none; border-radius: 50px;
+            font-size: 1rem; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); margin: 10px 0;
+        }
+        .btn:hover { background-color: var(--rose-red); transform: scale(1.05); }
+        
+        .btn-menu {
+            display: block; width: 100%; margin: 10px 0;
+            background-color: rgba(255, 209, 220, 0.5);
+            color: var(--sage-dark); font-weight: bold; border: 1px solid var(--sage-dark);
+        }
+        .back-btn { background-color: #888; font-size: 0.8rem; padding: 8px 20px; }
+
+        /* --- 4. POLAROID STYLE (Halaman Awal & Akhir) --- */
+        .polaroid-container {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 15px; margin: 20px 0;
+        }
+        .polaroid {
+            background: white; padding: 10px 10px 35px 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 130px; transform: rotate(-3deg);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        .polaroid:nth-child(even) { transform: rotate(3deg); }
+        .polaroid:hover { transform: scale(1.1) rotate(0deg); z-index: 10; }
+        
+        .polaroid img {
+            width: 100%; height: 130px; object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        /* Dekorasi Emoji */
+        .decor-emoji { position: absolute; font-size: 24px; z-index: 20; pointer-events: none; }
+        .washi-tape {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            width: 35px; height: 12px; background-color: rgba(255, 183, 197, 0.8);
+            z-index: 25; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .pos-tl { top: -10px; left: -10px; transform: rotate(-15deg); }
+        .pos-tr { top: -10px; right: -10px; transform: rotate(15deg); }
+        .pos-bl { bottom: 5px; left: -5px; transform: rotate(-10deg); }
+
+        /* --- 5. HALAMAN PROFILE (Foto Persegi Panjang) --- */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px; border-radius: 15px; text-align: left;
+        }
+        .profile-content {
+            display: flex; align-items: center; gap: 20px;
+        }
+        .profile-pic {
+            width: 120px; height: 160px; object-fit: cover;
+            border-radius: 10px; border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0;
+        }
+        .profile-details p { margin-bottom: 5px; font-size: 0.9rem; }
+        .social-links {
+            margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;
+            display: flex; justify-content: center; gap: 15px;
+        }
+        .social-btn { font-size: 1.5rem; color: var(--sage-dark); transition: 0.3s; }
+        .social-btn:hover { color: var(--rose-red); transform: scale(1.2); }
+
+        /* --- 6. PLAYER MUSIK (FOTO CD) --- */
+        .song-item {
+            display: flex; align-items: center; background: white;
+            padding: 10px; border-radius: 10px; margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: left;
+        }
+        
+        .song-img {
+            width: 50px; height: 50px;
+            border-radius: 50%; /* Membuat foto jadi bulat CD */
+            object-fit: cover; border: 2px solid #ccc; margin-right: 15px;
+            animation: spin 4s linear infinite; animation-play-state: paused;
+        }
+        .song-img.playing {
+            animation-play-state: running; border-color: var(--rose-red);
+        }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- 7. ANIMASI HALAMAN --- */
+        .page { display: none; animation: fadeIn 0.8s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 480px) {
+            .profile-content { flex-direction: column; text-align: center; }
+            .profile-pic { margin-bottom: 15px; }
+            .container { padding: 20px; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="position:absolute; top:10px; left:10px; font-size:2rem;">🌹</div>
+    <div style="position:absolute; top:10px; right:10px; font-size:2rem;">🌹</div>
+
+    <div id="page-welcome" class="page active">
+        <h1>Happy Valentine!</h1>
+        <p>For the one who never leaves my thoughts</p>
+        
+        <div class="polaroid-container">
+            <div class="polaroid">
+                <div class="washi-tape"></div><div class="decor-emoji pos-tl">🌺</div>
+                <img src="foto1.jpg" onerror="this.src='https://via.placeholder.com/150?text=Foto+1'" alt="Foto 1">
+            </div>
+            <div class="polaroid">
+                <div class="washi-tape"></div><div class="decor-emoji pos-tr">🌻</div>
+                <img src="foto2.jpg" onerror="this.src='https://via.placeholder.com/150?text=Foto+2'" alt="Foto 2">
+            </div>
+            <div class="polaroid">
+                <div class="washi-tape"></div><div class="decor-emoji pos-bl">🌷</div>
+                <img src="foto3.jpg" onerror="this.src='https://via.placeholder.com/150?text=Foto+3'" alt="Foto 3">
+            </div>
+        </div>
+        <button class="btn" onclick="goToPage('page-menu')">Buka Menu ❤️</button>
+    </div>
+
+    <div id="page-menu" class="page">
+        <h2>Special Menu</h2>
+        <button class="btn btn-menu" onclick="goToPage('page-profile')">👤 About me</button>
+        <button class="btn btn-menu" onclick="goToPage('page-music')">🎵 Songs that remind me of you </button>
+        <button class="btn btn-menu" onclick="goToPage('page-confession')">💌 Letter ?</button>
+    </div>
+
+    <div id="page-profile" class="page">
+        <h2>About me</h2>
+        <div class="profile-card">
+            <div class="profile-content">
+                <img src="foto_profil.jpg" onerror="this.src='https://via.placeholder.com/120x160?text=Profil'" class="profile-pic" alt="Profil">
+                <div class="profile-details">
+                    <p><strong>Nama:</strong> Nathanael Steven Nayoan (you can call me nathan btw...)</p>
+                    <p><strong>Umur:</strong> 18 Tahun</p>
+                    <p><strong>Hobi:</strong> Main basket, nonton film, and belajar something yang menarik</p>
+                    <p><strong>Interest:</strong> Banyak, dari olahraga, sci-fi, teknologi, film, and lain lain lah</p>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+        <button class="btn back-btn" onclick="goToPage('page-menu')">Kembali</button>
+    </div>
+
+    <div id="page-music" class="page">
+        <h2>Songs that remind me of you</h2>
+        <div class="song-item">
+            <img src="cover2.jpg" id="vinyl1" class="song-img" onerror="this.src='https://via.placeholder.com/50?text=CD'">
+            <div style="flex-grow:1">
+                <p style="margin:0; font-weight:bold;">pretty - JVKE</p>
+                <audio id="audio1" src="lagu1.mp3"></audio>
+            </div>
+            <button class="btn" style="padding:5px 15px; margin:0;" onclick="playMusic('audio1','vinyl1')">Play/Pause</button>
+        </div>
+        <div class="song-item">
+            <img src="cover1.jpg" id="vinyl2" class="song-img" onerror="this.src='https://via.placeholder.com/50?text=CD'">
+            <div style="flex-grow:1">
+                <p style="margin:0; font-weight:bold;">you! - LANY</p>
+                <audio id="audio2" src="lagu2.mp3"></audio>
+            </div>
+            <button class="btn" style="padding:5px 15px; margin:0;" onclick="playMusic('audio2','vinyl2')">Play/Pause</button>
+        </div>
+        <div class="song-item">
+            <img src="cover3.jpg" id="vinyl2" class="song-img" onerror="this.src='https://via.placeholder.com/50?text=CD'">
+            <div style="flex-grow:1">
+                <p style="margin:0; font-weight:bold;">kota ini tak sama tanpamu - Nadhif Basalamah</p>
+                <audio id="audio3" src="lagu3.mp3"></audio>
+            </div>
+            <button class="btn" style="padding:5px 15px; margin:0;" onclick="playMusic('audio3','vinyl3')">Play/Pause</button>
+        </div>
+        <button class="btn back-btn" onclick="goToPage('page-menu')">Kembali</button>
+    </div>
+
+    <div id="page-confession" class="page">
+        <h2>So do you curious about it ?</h2>
+        <div id="q-box">
+            <p style="font-style:italic;">"Cause you curious about it..."</p>
+            <h3 style="color:var(--rose-red); margin:20px 0;">I just want to say, will you be mine for now and for the rest of my life?🌹</h3>
+            <button class="btn" onclick="terimaCinta()">Yes, I Will! 💖</button>
+        </div>
+        <div id="success-box" style="display:none;">
+            <h2>Finally! I promise to take good care of you!❤️</h2>
+            <div style="font-size:3rem; margin:10px 0;">💐🥰🎁</div>
+            
+            <div class="polaroid-container">
+                <div class="polaroid">
+                    <div class="washi-tape"></div>
+                    <img src="foto_profil.jpg" onerror="this.src='https://via.placeholder.com/150?text=Kita+1'" alt="Kita 1">
+                </div>
+                <div class="polaroid">
+                    <div class="washi-tape"></div>
+                    <img src="foto1.jpg" onerror="this.src='https://via.placeholder.com/150?text=Kita+2'" alt="Kita 2">
+                </div>
+            </div>
+
+        </div>
+        <button class="btn back-btn" onclick="goToPage('page-menu')">Kembali</button>
+    </div>
+
+</div>
+
+<script>
+    function goToPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        stopMusic();
+    }
+
+    function playMusic(audioId, imgId) {
+        let a = document.getElementById(audioId);
+        let img = document.getElementById(imgId);
+        if (a.paused) {
+            stopMusic(); a.play(); img.classList.add('playing');
+        } else {
+            a.pause(); img.classList.remove('playing');
+        }
+    }
+
+    function stopMusic() {
+        document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime=0; });
+        document.querySelectorAll('.song-img').forEach(img => img.classList.remove('playing'));
+    }
+
+    function terimaCinta() {
+        document.getElementById('q-box').style.display = 'none';
+        document.getElementById('success-box').style.display = 'block';
+        tebarHati();
+    }
+
+    function tebarHati() {
+        setInterval(() => {
+            let h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.style.position = 'fixed';
+            h.style.top = '-20px';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.fontSize = Math.random() * 20 + 20 + 'px';
+            h.style.animation = 'fall 3s linear';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 3000);
+        }, 300);
+        
+        let style = document.createElement('style');
+        style.innerHTML = `@keyframes fall { to { transform: translateY(100vh); } }`;
+        document.head.appendChild(style);
+    }
+</script>
+
+</body>
+</html>
